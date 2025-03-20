@@ -157,4 +157,4 @@ The app includes two scripts in the scripts/ directory to convert source data in
 Feel free to fork this repository, submit issues, or create pull requests with enhancements!
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details (create one if needed).
+This project is licensed under the MIT License - see the LICENSE file for details.
