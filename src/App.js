@@ -5,6 +5,13 @@ import './App.css';
 function App() {
   const [addresses, setAddresses] = useState({ contacts: [], salutations: [] });
   const [templateData, setTemplateData] = useState({ template: '' });
+  const [branding, setBranding] = useState({
+    textColor: '#333333',
+    backgroundColor: '#f5f5f5',
+    buttonColor: '#4CAF50',
+    buttonHoverColor: '#45a049',
+    logoUrl: 'https://via.placeholder.com/150x50.png?text=Your+Logo',
+  });
   const [formData, setFormData] = useState({
     userFirstname: '',
     userLastname: '',
@@ -15,11 +22,13 @@ function App() {
   const [status, setStatus] = useState('');
 
   useEffect(() => {
+    // Fetch addresses
     fetch('/addresses.json')
       .then(response => response.json())
       .then(data => setAddresses(data))
       .catch(error => console.error('Error fetching addresses:', error));
 
+    // Fetch template
     fetch('/template.json')
       .then(response => response.json())
       .then(data => {
@@ -27,6 +36,12 @@ function App() {
         setFormData(prev => ({ ...prev, template: data.template }));
       })
       .catch(error => console.error('Error fetching template:', error));
+
+    // Fetch branding styles
+    fetch('/style.config.json')
+      .then(response => response.json())
+      .then(data => setBranding(data.branding))
+      .catch(error => console.error('Error fetching branding config:', error));
   }, []);
 
   const handleChange = (e) => {
@@ -74,8 +89,11 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h2>Email Generator</h2>
+    <div className="App" style={{ backgroundColor: branding.backgroundColor, color: branding.textColor }}>
+      <header>
+        <img src={branding.logoUrl} alt="Logo" className="logo" />
+        <h2>Email Generator</h2>
+      </header>
       <form onSubmit={handleSubmit}>
         <label>Your First Name:</label>
         <input
@@ -122,7 +140,7 @@ function App() {
         <label>Email Template:</label>
         <Editor value={formData.template} onChange={handleTemplateChange} />
 
-        <button type="submit">Send Email</button>
+        <button type="submit" style={{ backgroundColor: branding.buttonColor }}>Send Email</button>
       </form>
       <div className="status">{status}</div>
     </div>

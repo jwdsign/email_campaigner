@@ -1,0 +1,9 @@
+{
+    "branding": {
+      "textColor": "#333333",
+      "backgroundColor": "#f5f5f5",
+      "buttonColor": "#4CAF50",
+      "buttonHoverColor": "#45a049",
+      "logoUrl": "https://via.placeholder.com/150x50.png?text=Your+Logo"
+    }
+  }

@@ -1,0 +1,16 @@
+# Node.js dependencies
+node_modules/
+
+# Composer/PHP dependencies
+vendor/
+
+# Build output
+build/
+
+# Temporary files
+*.log
+*.cache
+
+# IDE files
+.vscode/
+.idea/

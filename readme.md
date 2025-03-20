@@ -9,6 +9,7 @@ A simple, zero-config web application built with React and PHP to generate and s
   - Recipient list generated from an Excel file (addresses.xlsx).
   - Email template loaded from a text file (template.txt).
 - WYSIWYG Editor: TinyMCE for user-friendly template editing.
+- Branding: Customizable text color, background color, button color, and logo via style.config.json.
 - Zero Config: Deployable on any PHP-enabled Apache/Nginx server without additional setup.
 
 ## Prerequisites
@@ -39,13 +40,12 @@ A simple, zero-config web application built with React and PHP to generate and s
    - git clone <repository-url>
    - cd email_app
 
-5. Install Node Dependencies:
-   - npm install
+5. Run the Install Script:
+   - For Windows: Double-click install.bat or run install.bat in Command Prompt.
+   - For Linux/macOS: Make executable with chmod +x install.sh, then run ./install.sh.
+   - This installs dependencies, converts data files, and builds the app.
 
-6. Install PHPMailer:
-   - composer require phpmailer/phpmailer
-
-7. Configure SMTP:
+6. Configure SMTP:
    - Edit public/config.json with your SMTP details:
      {
        "smtp": {
@@ -58,13 +58,18 @@ A simple, zero-config web application built with React and PHP to generate and s
      }
    - For Gmail, use an App Password (https://support.google.com/accounts/answer/185833) if 2FA is enabled.
 
-8. Convert Data Files:
-   - Place your addresses.xlsx and template.txt in scripts/.
-   - Run: npm run convert-all
-   - Generates public/addresses.json and public/template.json.
-
-9. Build the App:
-   - npm run build
+7. Configure Branding (Optional):
+   - Edit public/style.config.json to customize appearance:
+     {
+       "branding": {
+         "textColor": "#333333",
+         "backgroundColor": "#f5f5f5",
+         "buttonColor": "#4CAF50",
+         "buttonHoverColor": "#45a049",
+         "logoUrl": "https://via.placeholder.com/150x50.png?text=Your+Logo"
+       }
+     }
+   - Replace logoUrl with your logo’s URL or local path (e.g., /logo.png, uploaded separately).
 
 ### Deployment
 1. Upload to Server:
