@@ -100,6 +100,36 @@ A simple, zero-config web application built with React and PHP to generate and s
   Best regards,
   $firstname
 
+## Data Conversion Scripts
+The app includes two scripts in the scripts/ directory to convert source data into JSON files used by the app. These are run via npm run convert-all.
+
+### excelToJson.js
+- **Purpose**: Converts an Excel file (scripts/addresses.xlsx) into a JSON file (public/addresses.json) containing a list of recipients.
+- **Input Format**: An Excel spreadsheet with the following columns (case-sensitive):
+  - Salutation: The recipient's title (e.g., Mr., Ms., Dr.).
+  - Firstname: The recipient's first name.
+  - Lastname: The recipient's last name.
+  - Email: The recipient's email address.
+- **Output**: A JSON object with:
+  - salutations: An array of unique salutations from the data.
+  - contacts: An array of objects with salutation, firstname, lastname, and email properties.
+- **Usage**:
+  - Place your addresses.xlsx in scripts/.
+  - Run: npm run convert-excel or npm run convert-all.
+  - Output is written to public/addresses.json.
+
+### textToJson.js
+- **Purpose**: Converts a plain text file (scripts/template.txt) into a JSON file (public/template.json) containing the email template.
+- **Input Format**: A plain text file with placeholders:
+  - $salutation: Replaced with the recipient's salutation.
+  - $firstname: Replaced with the sender's first name.
+  - $lastname: Replaced with the recipient's last name.
+- **Output**: A JSON object with a single template property containing the text content.
+- **Usage**:
+  - Place your template.txt in scripts/.
+  - Run: npm run convert-text or npm run convert-all.
+  - Output is written to public/template.json.
+
 ## Notes
 - SMTP Limitations: Some SMTP servers (e.g., Gmail) may override the "From" address with the authenticated account unless using a service like SendGrid/Mailgun with domain verification.
 - Security: For production, add:
