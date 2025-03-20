@@ -1,0 +1,23 @@
+{
+    "name": "email-app",
+    "version": "1.0.0",
+    "dependencies": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "@tinymce/tinymce-react": "^4.3.2",
+      "@emailjs/browser": "^4.3.3",
+      "xlsx": "^0.18.5"
+    },
+    "scripts": {
+      "start": "react-scripts start",
+      "build": "react-scripts build",
+      "eject": "react-scripts eject",
+      "convert-excel": "node scripts/excelToJson.js",
+      "convert-text": "node scripts/textToJson.js",
+      "convert-all": "npm run convert-excel && npm run convert-text"
+    },
+    "devDependencies": {
+      "react-scripts": "5.0.1"
+    },
+    "homepage": "./"
+  }
