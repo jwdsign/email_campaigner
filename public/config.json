@@ -1,9 +1,10 @@
 {
-    "smtp": {
-      "host": "smtp.example.com",
-      "username": "your_smtp_username",
-      "password": "your_smtp_password",
-      "port": 587,
-      "encryption": "tls"
-    }
-  }
+  "smtp": {
+    "host": "smtp.example.com",
+    "username": "your_smtp_username",
+    "password": "your_smtp_password",
+    "port": 587,
+    "encryption": "tls"
+  },
+  "useMailto": false
+}

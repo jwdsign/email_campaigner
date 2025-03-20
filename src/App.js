@@ -12,6 +12,7 @@ function App() {
     buttonHoverColor: '#45a049',
     logoUrl: 'https://via.placeholder.com/150x50.png?text=Your+Logo',
   });
+  const [config, setConfig] = useState({ useMailto: false });
   const [formData, setFormData] = useState({
     userFirstname: '',
     userLastname: '',
@@ -42,6 +43,12 @@ function App() {
       .then(response => response.json())
       .then(data => setBranding(data.branding))
       .catch(error => console.error('Error fetching branding config:', error));
+
+    // Fetch config
+    fetch('/config.json')
+      .then(response => response.json())
+      .then(data => setConfig(data))
+      .catch(error => console.error('Error fetching config:', error));
   }, []);
 
   const handleChange = (e) => {
@@ -55,7 +62,7 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('Sending...');
+    setStatus('Processing...');
 
     const recipient = addresses.contacts[formData.recipientIndex];
     const emailBody = formData.template
@@ -63,28 +70,38 @@ function App() {
       .replace('$firstname', formData.userFirstname)
       .replace('$lastname', recipient.lastname);
 
-    try {
-      const response = await fetch('/send-email.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userFirstname: formData.userFirstname,
-          userLastname: formData.userLastname,
-          userEmail: formData.userEmail,
-          recipientEmail: recipient.email,
-          template: emailBody,
-        }),
-      });
+    if (config.useMailto) {
+      // Use mailto: link
+      const subject = encodeURIComponent(`Message from ${formData.userFirstname} ${formData.userLastname}`);
+      const body = encodeURIComponent(emailBody);
+      const mailtoLink = `mailto:${recipient.email}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+      setStatus('Opening email client...');
+    } else {
+      // Use PHP SMTP
+      try {
+        const response = await fetch('/send-email.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userFirstname: formData.userFirstname,
+            userLastname: formData.userLastname,
+            userEmail: formData.userEmail,
+            recipientEmail: recipient.email,
+            template: emailBody,
+          }),
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        setStatus(result.message);
-      } else {
-        setStatus(result.error);
+        const result = await response.json();
+        if (response.ok) {
+          setStatus(result.message);
+        } else {
+          setStatus(result.error);
+        }
+      } catch (error) {
+        console.error('Error sending email:', error);
+        setStatus('Failed to send email');
       }
-    } catch (error) {
-      console.error('Error sending email:', error);
-      setStatus('Failed to send email');
     }
   };
 
@@ -119,7 +136,7 @@ function App() {
           name="userEmail"
           value={formData.userEmail}
           onChange={handleChange}
-          required
+          required={!config.useMailto} // Optional if using mailto
         />
 
         <label>Select Recipient:</label>
@@ -140,7 +157,9 @@ function App() {
         <label>Email Template:</label>
         <Editor value={formData.template} onChange={handleTemplateChange} />
 
-        <button type="submit" style={{ backgroundColor: branding.buttonColor }}>Send Email</button>
+        <button type="submit" style={{ backgroundColor: branding.buttonColor }}>
+          {config.useMailto ? 'Open Email Client' : 'Send Email'}
+        </button>
       </form>
       <div className="status">{status}</div>
     </div>
