@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Editor from './components/Editor';
-import emailjs from '@emailjs/browser';
 import './App.css';
 
 function App() {
@@ -16,13 +15,11 @@ function App() {
   const [status, setStatus] = useState('');
 
   useEffect(() => {
-    // Fetch addresses
     fetch('/addresses.json')
       .then(response => response.json())
       .then(data => setAddresses(data))
       .catch(error => console.error('Error fetching addresses:', error));
 
-    // Fetch template
     fetch('/template.json')
       .then(response => response.json())
       .then(data => {
@@ -30,9 +27,6 @@ function App() {
         setFormData(prev => ({ ...prev, template: data.template }));
       })
       .catch(error => console.error('Error fetching template:', error));
-
-    // Initialize EmailJS
-    emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // Replace with your EmailJS public key
   }, []);
 
   const handleChange = (e) => {
@@ -44,7 +38,7 @@ function App() {
     setFormData(prev => ({ ...prev, template: content }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Sending...');
 
@@ -54,22 +48,29 @@ function App() {
       .replace('$firstname', formData.userFirstname)
       .replace('$lastname', recipient.lastname);
 
-    const emailParams = {
-      from_name: `${formData.userFirstname} ${formData.userLastname}`,
-      from_email: formData.userEmail,
-      to_email: recipient.email,
-      subject: `Message from ${formData.userFirstname} ${formData.userLastname}`,
-      message: emailBody,
-    };
-
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailParams)
-      .then(() => {
-        setStatus('Email sent successfully!');
-      })
-      .catch(error => {
-        console.error('Error sending email:', error);
-        setStatus('Failed to send email');
+    try {
+      const response = await fetch('/send-email.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userFirstname: formData.userFirstname,
+          userLastname: formData.userLastname,
+          userEmail: formData.userEmail,
+          recipientEmail: recipient.email,
+          template: emailBody,
+        }),
       });
+
+      const result = await response.json();
+      if (response.ok) {
+        setStatus(result.message);
+      } else {
+        setStatus(result.error);
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setStatus('Failed to send email');
+    }
   };
 
   return (
